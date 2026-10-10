@@ -88,6 +88,19 @@ svg .ah{fill:currentColor} svg .ah-g{fill:var(--gate)}
 .brief{font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:12px;max-height:340px;overflow:auto;overflow-wrap:anywhere}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
 .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+.briefwrap{position:relative}
+.locked .brief{filter:blur(5px);user-select:none;pointer-events:none}
+.lockmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
+.lockmsg p{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:.9rem}
+dialog{border:1px solid var(--line);border-radius:12px;padding:0;max-width:440px;width:calc(100% - 32px);background:var(--surface);color:var(--fg)}
+dialog::backdrop{background:rgba(10,20,18,.45)}
+.gate{display:grid;gap:12px;padding:22px}
+.gate h2{font-size:1.25rem}
+.consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:.9rem}
+.consent input{width:20px;height:20px;margin-top:2px;accent-color:var(--ok)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:var(--warn);font-size:.85rem;min-height:1.1em}
 footer{padding-top:28px;font-size:.86rem;color:var(--muted);display:grid;gap:4px}
 </style>
 </head>
@@ -143,17 +156,31 @@ footer{padding-top:28px;font-size:.86rem;color:var(--muted);display:grid;gap:4px
       <ul class="rules" id="ruleList"></ul>
     </div>
     <div class="card">
-      <div class="bar" style="justify-content:space-between"><h2>Your team brief</h2><button class="btn primary" type="button" id="copy">Copy brief</button></div>
+      <div class="bar" style="justify-content:space-between"><h2>Your team brief</h2><button class="btn primary" type="button" id="copy">Unlock &amp; copy brief</button></div>
       <p class="small muted">Paste this into Claude, ChatGPT, or whatever tool runs your agents. It tells each agent its job, its limits, and who checks its work.</p>
-      <div class="brief" id="brief"></div>
+      <div class="briefwrap" id="briefWrap"><div class="brief" id="brief"></div><div class="lockmsg" id="lockMsg"><p>Enter your email to unlock and copy your brief. It's free.</p></div></div>
       <span class="small muted" id="copyMsg" aria-live="polite"></span>
     </div>
   </section>
 </div>
 
+<dialog id="gate" aria-labelledby="gateH">
+  <form class="gate" id="gateForm" method="dialog" novalidate>
+    <h2 id="gateH">Get your team brief</h2>
+    <p class="small muted">Free. Enter your email and your brief unlocks right away.</p>
+    <label class="f" for="g_name"><span>First name (optional)</span><input type="text" id="g_name" name="name" maxlength="60" autocomplete="given-name"></label>
+    <label class="f" for="g_email"><span>Email</span><input type="text" id="g_email" name="email" maxlength="200" autocomplete="email" inputmode="email" required></label>
+    <label class="hp" for="g_web" aria-hidden="true">Website<input type="text" id="g_web" name="website" tabindex="-1" autocomplete="off"></label>
+    <label class="consent" for="g_sub"><input type="checkbox" id="g_sub" name="subscribed"><span>Yes, email me new Lead with AI lessons and tools, about twice a month. Unsubscribe anytime.</span></label>
+    <p class="err" id="gErr" aria-live="polite"></p>
+    <div class="bar"><button class="btn primary" type="submit" id="gGo">Unlock my brief</button><button class="btn" type="button" id="gCancel">Not now</button></div>
+    <p class="small muted">Your email goes only to Sandie's list. Never sold or shared.</p>
+  </form>
+</dialog>
+
 <footer>
   <p>Anyone can build an agent. Making them work together is a leadership job.</p>
-  <p>From <strong>Lead with AI</strong> by Sandie Dela Cruz, AuD, OD, MBA. Your work stays in this browser only.</p>
+  <p>From <strong>Lead with AI</strong> by Sandie Dela Cruz, AuD, OD, MBA. Your team design stays in this browser. If you unlock the brief, only your name and email are sent, to Sandie's list.</p>
 </footer>
 </div>
 
@@ -292,9 +319,34 @@ document.addEventListener("click",async e=>{
   else if(b.dataset.down!==undefined){ const i=+b.dataset.down; [S.steps[i+1],S.steps[i]]=[S.steps[i],S.steps[i+1]]; save(); renderAll(); }
   else if(b.id==="reset"){ S={goal:"",trust:"all",lane:"",rules:"",steps:[{type:"agent",name:"",does:"",doesNot:""}]}; save(); renderAll(); }
   else if(b.id==="loadEx"){ S=JSON.parse(JSON.stringify(EXAMPLE)); save(); isExample=true; renderAll(); $("#exNote").hidden=false; }
-  else if(b.id==="copy"){ try{ await navigator.clipboard.writeText($("#brief").textContent); $("#copyMsg").textContent="Copied. Paste it into your AI tool."; }catch(err){ const r=document.createRange(); r.selectNodeContents($("#brief")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); $("#copyMsg").textContent="Selected. Press Ctrl+C or Cmd+C to copy."; } }
+  else if(b.id==="copy"){ if(unlocked()) copyBrief(); else openGate(); }
+  else if(b.id==="gCancel"){ $("#gate").close(); }
 });
-renderAll(); $("#laneWrap").hidden=S.trust!=="lane";
+/* ---------- Email gate ---------- */
+const ENDPOINT="https://script.google.com/macros/s/AKfycbwQ4vmuTL0Eo3o_-o3OWd_77xvvuLT2gq9sSfMroQB7VX9tgcjhtQNJ949gOGTng25C9Q/exec"; // Google Apps Script web app URL for the subscriber sheet
+const UKEY="agentTeamBuilder.unlocked";
+function unlocked(){ try{return localStorage.getItem(UKEY)==="1"}catch(e){return false} }
+function paintLock(){ $("#briefWrap").classList.toggle("locked",!unlocked()); $("#lockMsg").hidden=unlocked(); $("#copy").textContent=unlocked()?"Copy brief":"Unlock & copy brief"; }
+function openGate(){ $("#gErr").textContent=""; const d=$("#gate"); if(d.showModal) d.showModal(); else d.setAttribute("open",""); $("#g_email").focus(); }
+async function copyBrief(){
+  const t=$("#brief").textContent;
+  try{ await navigator.clipboard.writeText(t); $("#copyMsg").textContent="Copied. Paste it into your AI tool."; }
+  catch(err){ const r=document.createRange(); r.selectNodeContents($("#brief")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); $("#copyMsg").textContent="Selected. Press Ctrl+C or Cmd+C to copy."; }
+}
+$("#gateForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const email=$("#g_email").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ $("#gErr").textContent="Please enter a valid email address."; $("#g_email").focus(); return; }
+  try{localStorage.setItem(UKEY,"1")}catch(err){}
+  $("#gate").close(); paintLock(); copyBrief();
+  if(ENDPOINT){
+    const sub=$("#g_sub").checked;
+    const body=new URLSearchParams({name:$("#g_name").value.trim(),email,subscribed:sub?"yes":"no",source:"Agent Team Builder (Lesson 1)",website:$("#g_web").value,
+      consent:sub?"Yes, email me new Lead with AI lessons and tools, about twice a month. Unsubscribe anytime.":"Unlocked brief only. No subscription."});
+    fetch(ENDPOINT,{method:"POST",mode:"no-cors",body}).catch(()=>{});
+  }
+});
+renderAll(); $("#laneWrap").hidden=S.trust!=="lane"; paintLock();
 </script>
 </body>
 </html>

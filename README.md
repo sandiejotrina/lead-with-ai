@@ -39,7 +39,9 @@ You can also browse the `lessons` folder above. Each lesson has the key ideas, t
 
 ## Your privacy
 
-The tools run entirely in your browser. Nothing you type is sent anywhere or stored on a server. It stays saved in your own browser so you can come back to it.
+The tools run in your browser. Your work is never sent to a server; it stays saved in your own browser so you can come back to it.
+
+The one exception: to unlock the team brief in the Agent Team Builder, you enter your email. Only your first name (optional) and email are sent, to Sandie's list. They're never sold or shared, and you only get emails if you tick the subscribe box. You can unsubscribe anytime.
 
 ## Questions or ideas
 
