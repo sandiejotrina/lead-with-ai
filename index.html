@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free tools and lessons for anyone who builds or works with AI agents. Anyone can build an agent. Making them work together is a leadership job.">
+<title>Lead with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a simple lesson index. Thesis up top, one row per lesson with its video and tool. */
+:root{--bg:#F4F6F5;--surface:#FFFFFF;--fg:#13201D;--muted:#56635F;--line:#D5DDDA;--accent:#0E5E52;--accent-soft:#DDEEE9;--gate:#B5541C;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"Literata",Georgia,serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme: dark){:root{--bg:#0E1513;--surface:#151F1C;--fg:#E7EDEB;--muted:#9AA9A4;--line:#2A3632;--accent:#5FC2AE;--accent-soft:#18302A;--gate:#F0A070;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6;padding:0 18px 64px}
+.wrap{max-width:820px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.2rem,7vw,3.6rem);font-weight:800;letter-spacing:-.03em}
+h1 em{font-style:normal;color:var(--accent)}
+h2{font-size:1.3rem;font-weight:800}
+p{margin:0;max-width:62ch}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:16px;padding:56px 0 36px}
+.lede{font-size:1.15rem;color:var(--muted)}
+.lessons{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.lesson{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;grid-template-columns:3rem 1fr;gap:16px;align-items:start}
+.lesson .n{font-family:var(--display);font-weight:800;font-size:2rem;color:var(--accent);line-height:1}
+.lesson .body{display:grid;gap:8px;min-width:0}
+.video{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+a.btn{font-family:var(--mono);font-size:.8rem;text-decoration:none;border-radius:6px;padding:9px 13px;border:1px solid var(--accent);color:var(--accent)}
+a.btn.primary{background:var(--accent);color:var(--surface)}
+a.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.soon{opacity:.6}
+.soon .tag{font-family:var(--mono);font-size:.7rem;color:var(--gate)}
+section{padding-top:40px;display:grid;gap:12px}
+footer{padding-top:40px;color:var(--muted);font-size:.9rem;display:grid;gap:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Free tools · no sign-up · no code</p>
+  <h1>Anyone can build an agent. <em>Leading them is the skill.</em></h1>
+  <p class="lede">Each lesson goes with a video on the Business Automation Made Simple YouTube channel. Watch the video, then open the tool and use it on your own work.</p>
+</header>
+
+<ol class="lessons">
+  <li class="lesson">
+    <span class="n">1</span>
+    <div class="body">
+      <h2>Your agents need a boss</h2>
+      <p class="video">Video: I Run 8 AI Agents Like a Team. Here's the Org Chart.</p>
+      <p>Give every agent a job description, add a checker that isn't the doer, decide where you approve, and turn corrections into rules.</p>
+      <div class="links">
+        <a class="btn primary" href="tools/agent-team-builder/">Open the Agent Team Builder</a>
+        <a class="btn" href="https://github.com/sandiejotrina/lead-with-ai/blob/main/lessons/01-lead-your-agents/README.md">Read the lesson</a>
+      </div>
+    </div>
+  </li>
+  <li class="lesson soon">
+    <span class="n">2</span>
+    <div class="body">
+      <h2>Why AI agents fail</h2>
+      <p class="video">Video: Why AI Agents Fail (It's Not a Technical Problem)</p>
+      <p class="tag">Coming soon</p>
+    </div>
+  </li>
+  <li class="lesson soon">
+    <span class="n">3</span>
+    <div class="body">
+      <h2>Think like a manager, not a coder</h2>
+      <p class="video">Video: How to Use AI Agents: Think Like a Manager, Not a Coder</p>
+      <p class="tag">Coming soon</p>
+    </div>
+  </li>
+</ol>
+
+<section>
+  <h2>Your privacy</h2>
+  <p>The tools run entirely in your browser. Nothing you type is sent anywhere.</p>
+</section>
+
+<footer>
+  <p><strong>Lead with AI</strong> by Sandie Dela Cruz, AuD, OD, MBA</p>
+  <p>Clinician, AI builder, and leadership trainer.</p>
+</footer>
+</div>
+</body>
+</html>

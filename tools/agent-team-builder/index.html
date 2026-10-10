@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Design your AI agent team the way a good manager would. A free companion tool to the Lead with AI video series.">
+<title>Agent Team Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two-pane workbench. Left: the team you're defining (steps in order). Right: a live org chart drawn like the whiteboard, the four-rule check, and a copyable team brief. Stacks on phones. */
+:root{
+  --bg:#F4F6F5; --surface:#FFFFFF; --fg:#13201D; --muted:#56635F; --line:#D5DDDA;
+  --ink:#13201D; --check:#1F5FA8; --check-soft:#E3EDF8; --gate:#B5541C; --gate-soft:#F8E8DD;
+  --ok:#0E5E52; --ok-soft:#DDEEE9; --warn:#9A6212; --warn-soft:#F6ECD9;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1513; --surface:#151F1C; --fg:#E7EDEB; --muted:#9AA9A4; --line:#2A3632; --ink:#E7EDEB;
+  --check:#7FB2EA; --check-soft:#17283B; --gate:#F0A070; --gate-soft:#3A2518;
+  --ok:#5FC2AE; --ok-soft:#18302A; --warn:#E2AE5C; --warn-soft:#33291A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#151F1C; --fg:#E7EDEB; --muted:#9AA9A4; --line:#2A3632; --ink:#E7EDEB;
+  --check:#7FB2EA; --check-soft:#17283B; --gate:#F0A070; --gate-soft:#3A2518;
+  --ok:#5FC2AE; --ok-soft:#18302A; --warn:#E2AE5C; --warn-soft:#33291A; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.2rem;font-weight:800}
+h3{font-size:.98rem;font-weight:500}
+p{margin:0;max-width:64ch}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+header{display:grid;gap:12px;padding-block:32px 22px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font-family:var(--mono);font-size:.78rem;border-radius:6px;padding:8px 12px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn.primary{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.add-agent{border-color:var(--ink)} .btn.add-check{border-color:var(--check);color:var(--check)} .btn.add-gate{border-color:var(--gate);color:var(--gate)}
+.btn.icon{padding:5px 8px}
+.note{font-family:var(--mono);font-size:.74rem;color:var(--warn);background:var(--warn-soft);padding:6px 10px;border-radius:6px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.pane{display:grid;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+label.f{display:grid;gap:4px;font-size:.88rem;min-width:0}
+label.f span{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+input[type=text],textarea,select{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+textarea{min-height:56px;resize:vertical}
+
+.step{border-left:4px solid var(--ink)}
+.step.check{border-left-color:var(--check)}
+.step.gate{border-left-color:var(--gate)}
+.step .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--bg)}
+.step.check .tag{background:var(--check-soft);color:var(--check)}
+.step.gate .tag{background:var(--gate-soft);color:var(--gate)}
+.warnline{font-size:.82rem;color:var(--warn)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:560px;height:auto;color:var(--fg)}
+svg text{font-family:var(--mono);fill:currentColor}
+svg .nt{font-size:12px;font-weight:500}
+svg .ns{font-size:9.5px;fill:var(--muted)}
+svg .n-agent{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+svg .n-check{fill:var(--check-soft);stroke:var(--check);stroke-width:1.4}
+svg .n-gate{fill:var(--gate-soft);stroke:var(--gate);stroke-width:1.8}
+svg .t-gate{fill:var(--gate)} svg .t-check{fill:var(--check)}
+svg .edge{stroke:currentColor;stroke-width:1.3;fill:none}
+svg .loop{stroke:var(--gate);stroke-width:1.3;fill:none;stroke-dasharray:5 4}
+svg .ah{fill:currentColor} svg .ah-g{fill:var(--gate)}
+
+.rules{display:grid;gap:8px;list-style:none;margin:0;padding:0}
+.rule{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px;border-radius:8px;background:var(--bg)}
+.pill{font-family:var(--mono);font-size:.68rem;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.no{background:var(--warn-soft);color:var(--warn)}
+.rule b{font-family:var(--display);font-weight:500}
+.score{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1}
+.brief{font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:12px;max-height:340px;overflow:auto;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+footer{padding-top:28px;font-size:.86rem;color:var(--muted);display:grid;gap:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Companion to the video · I Run 8 AI Agents Like a Team</p>
+  <h1>Agent Team Builder</h1>
+  <p class="muted">Design your AI agent team the way a good manager would. Give every agent a job description, add a checker that isn't the doer, decide where you approve, and turn corrections into rules. The org chart draws itself as you go.</p>
+  <div class="bar">
+    <span class="note" id="exNote">Example loaded: a weekly newsletter team. Edit it or start fresh.</span>
+    <button class="btn" type="button" id="reset">Start fresh</button>
+    <button class="btn" type="button" id="loadEx">Load the example</button>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="pane" aria-label="Your team">
+    <div class="card">
+      <label class="f" for="goal"><span>What is this team for?</span><input type="text" id="goal" maxlength="120" placeholder="e.g. A weekly newsletter for my clients"></label>
+    </div>
+    <div id="steps" class="pane"></div>
+    <div class="card">
+      <p class="eyebrow">Add a step, in order</p>
+      <div class="bar">
+        <button class="btn add-agent" type="button" data-add="agent">+ Agent (does the work)</button>
+        <button class="btn add-check" type="button" data-add="check">+ Checker (finds problems)</button>
+        <button class="btn add-gate" type="button" data-add="gate">+ Your approval gate</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Rules from your corrections</h3>
+      <p class="small muted">Every time you reject something, write down why as a rule. One per line.</p>
+      <textarea id="rules" maxlength="1500" placeholder="e.g. Keep it under 400 words."></textarea>
+      <label class="f" for="trust"><span>How much do you trust this team right now?</span>
+        <select id="trust">
+          <option value="all">Stage 1: I approve every single item</option>
+          <option value="batch">Stage 2: I approve in batches</option>
+          <option value="lane">Stage 3: low-risk items run on their own</option>
+        </select></label>
+      <label class="f" for="lane" id="laneWrap"><span>What may run on its own, and what always comes back to you?</span><input type="text" id="lane" maxlength="200" placeholder="e.g. Reminders run alone. Anything about money comes to me."></label>
+    </div>
+  </section>
+
+  <section class="pane" aria-label="Your org chart and check">
+    <div class="card">
+      <div class="bar" style="justify-content:space-between"><h2>Your org chart</h2>
+        <div class="legend"><span><i class="sw" style="border:1.4px solid var(--ink);background:var(--surface)"></i>agent</span><span><i class="sw" style="background:var(--check-soft);border:1.4px solid var(--check)"></i>checker</span><span><i class="sw" style="background:var(--gate-soft);border:1.8px solid var(--gate)"></i>you</span></div></div>
+      <div class="chart" id="chart"></div>
+    </div>
+    <div class="card">
+      <div class="bar" style="justify-content:space-between;align-items:baseline"><h2>The four rules</h2><span class="score" id="score">0/4</span></div>
+      <ul class="rules" id="ruleList"></ul>
+    </div>
+    <div class="card">
+      <div class="bar" style="justify-content:space-between"><h2>Your team brief</h2><button class="btn primary" type="button" id="copy">Copy brief</button></div>
+      <p class="small muted">Paste this into Claude, ChatGPT, or whatever tool runs your agents. It tells each agent its job, its limits, and who checks its work.</p>
+      <div class="brief" id="brief"></div>
+      <span class="small muted" id="copyMsg" aria-live="polite"></span>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p>Anyone can build an agent. Making them work together is a leadership job.</p>
+  <p>From <strong>Lead with AI</strong> by Sandie Dela Cruz, AuD, OD, MBA. Your work stays in this browser only.</p>
+</footer>
+</div>
+
+<script>
+const KEY="agentTeamBuilder.v1";
+const EXAMPLE={goal:"A weekly newsletter for my clients",trust:"batch",lane:"",
+ rules:"Keep it under 400 words.\nNo hype words like \"game-changer.\"\nEvery fact needs a source link.",
+ steps:[
+  {type:"agent",name:"Researcher",does:"Finds three useful updates for my clients each week, with source links.",doesNot:"Does not write the newsletter or give opinions."},
+  {type:"agent",name:"Writer",does:"Turns the three updates into a short newsletter in my voice.",doesNot:"Does not add facts that the researcher didn't provide."},
+  {type:"check",name:"Fact & tone checker",does:"Checks every fact has a source and nothing sounds like hype.",doesNot:"Does not rewrite the newsletter. It only flags problems.",checklist:"Every fact has a source\nUnder 400 words\nNo hype words"},
+  {type:"gate",name:"Me",does:"I approve the newsletter once a week before it goes out.",batch:"Once a week"}
+ ]};
+let S=load()||JSON.parse(JSON.stringify(EXAMPLE));
+let isExample=!localStorage_get();
+const $=q=>document.querySelector(q);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function localStorage_get(){try{return localStorage.getItem(KEY)}catch(e){return null}}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&Array.isArray(v.steps)?v:null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} isExample=false; $("#exNote").hidden=true;}
+
+/* ---------- Left pane ---------- */
+function stepHTML(st,i){
+  const label={agent:"Agent",check:"Checker",gate:"Your gate"}[st.type];
+  const ctrl=`<div class="bar"><button class="btn icon" type="button" data-up="${i}" aria-label="Move up" ${i===0?"disabled":""}>↑</button><button class="btn icon" type="button" data-down="${i}" aria-label="Move down" ${i===S.steps.length-1?"disabled":""}>↓</button><button class="btn icon" type="button" data-del="${i}" aria-label="Remove">✕</button></div>`;
+  if(st.type==="gate") return `<div class="card step gate"><div class="top"><span class="tag">${i+1} · ${label}</span>${ctrl}</div>
+    <label class="f" for="d${i}"><span>What do you approve here?</span><input type="text" id="d${i}" data-i="${i}" data-k="does" maxlength="200" value="${esc(st.does)}" placeholder="e.g. I approve the final draft before it's sent"></label>
+    <label class="f" for="b${i}"><span>How often, and in what batch?</span><input type="text" id="b${i}" data-i="${i}" data-k="batch" maxlength="80" value="${esc(st.batch)}" placeholder="e.g. Once a week, all drafts together"></label></div>`;
+  return `<div class="card step ${st.type}"><div class="top"><span class="tag">${i+1} · ${label}</span>${ctrl}</div>
+    <label class="f" for="n${i}"><span>Name</span><input type="text" id="n${i}" data-i="${i}" data-k="name" maxlength="40" value="${esc(st.name)}" placeholder="${st.type==="check"?"e.g. Quality checker":"e.g. Researcher"}"></label>
+    <div class="two">
+      <label class="f" for="d${i}"><span>Does (one sentence)</span><textarea id="d${i}" data-i="${i}" data-k="does" maxlength="240">${esc(st.does)}</textarea></label>
+      <label class="f" for="x${i}"><span>Does NOT (its limits)</span><textarea id="x${i}" data-i="${i}" data-k="doesNot" maxlength="240">${esc(st.doesNot)}</textarea></label>
+    </div>
+    ${st.type==="check"?`<label class="f" for="c${i}"><span>Pass/fail checklist, one per line</span><textarea id="c${i}" data-i="${i}" data-k="checklist" maxlength="600">${esc(st.checklist)}</textarea></label>`:""}
+    <p class="warnline" id="w${i}"></p></div>`;
+}
+function renderLeft(){
+  $("#goal").value=S.goal||""; $("#rules").value=S.rules||""; $("#trust").value=S.trust||"all"; $("#lane").value=S.lane||"";
+  $("#steps").innerHTML=S.steps.map(stepHTML).join("") || `<div class="card"><p class="muted">No steps yet. Add your first agent below.</p></div>`;
+  $("#exNote").hidden=!isExample;
+}
+
+/* ---------- Analysis ---------- */
+const STOP=new Set("the a an and or of to for in on with my our your it its is are be that this from by at as each every one".split(" "));
+const words=s=>new Set(String(s||"").toLowerCase().replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(w=>w.length>2&&!STOP.has(w)));
+function overlap(a,b){const A=words(a),B=words(b); if(!A.size||!B.size) return 0; let n=0; A.forEach(w=>{if(B.has(w))n++}); return n/Math.min(A.size,B.size);}
+function analyze(){
+  const workers=S.steps.map((s,i)=>({...s,i})).filter(s=>s.type!=="gate");
+  const agents=workers.filter(s=>s.type==="agent");
+  const warn={};
+  workers.forEach(s=>{ if(!s.doesNot||!s.doesNot.trim()) warn[s.i]="Add what this one does NOT do. Missing limits are how roles overlap."; });
+  for(let a=0;a<agents.length;a++)for(let b=a+1;b<agents.length;b++){
+    if(overlap(agents[a].does,agents[b].does)>=0.6){ const m=`Sounds a lot like "${agents[a].name||"step "+(agents[a].i+1)}". Merge them, or split the job more clearly.`; warn[agents[b].i]=warn[agents[b].i]||m; }
+  }
+  const r1=workers.length>0 && workers.every(s=>s.name&&s.does&&s.doesNot&&s.doesNot.trim());
+  // Rule 2: a checker appears after at least one agent and before the first gate (or anywhere after an agent if no gate)
+  const firstGate=S.steps.findIndex(s=>s.type==="gate");
+  const firstAgent=S.steps.findIndex(s=>s.type==="agent");
+  const r2=S.steps.some((s,i)=>s.type==="check" && firstAgent>-1 && i>firstAgent && (firstGate===-1||i<firstGate) && (s.checklist||"").trim());
+  const r3=firstGate>-1 && S.steps.filter(s=>s.type==="gate").every(g=>g.does&&g.batch) && (S.trust!=="lane" || (S.lane||"").trim());
+  const r4=(S.rules||"").split("\n").filter(x=>x.trim()).length>=1;
+  return {warn,rules:[
+    {ok:r1,t:"Every agent has a job description, including what it does not do.",fix:"Fill in Name, Does, and Does NOT for every agent and checker."},
+    {ok:r2,t:"Nobody grades their own work.",fix:"Add a checker after your agents and before your gate, with a pass/fail checklist."},
+    {ok:r3,t:"Trust is earned in stages.",fix:S.trust==="lane"?"Say what may run on its own and what always comes back to you.":"Add your approval gate and say what you approve and how often."},
+    {ok:r4,t:"Every correction becomes a rule.",fix:"Write at least one rule from something you've corrected before."}
+  ]};
+}
+
+/* ---------- Chart ---------- */
+function wrapText(t,max){const out=[];let line="";String(t||"").split(/\s+/).forEach(w=>{if((line+" "+w).trim().length>max){if(line)out.push(line);line=w}else line=(line+" "+w).trim()}); if(line)out.push(line); return out.slice(0,2);}
+function renderChart(){
+  const steps=S.steps; if(!steps.length){ $("#chart").innerHTML=`<p class="muted small">Your org chart appears here.</p>`; return; }
+  const perRow=4, W=640, colW=W/perRow, bw=128, bh=58, rowH=110, top=64;
+  const rows=Math.ceil(steps.length/perRow), H=top+rows*rowH+(S.rules&&S.rules.trim()?20:0)+10;
+  const pos=steps.map((s,i)=>{const r=Math.floor(i/perRow); let c=i%perRow; if(r%2===1)c=perRow-1-c; return {x:c*colW+colW/2, y:top+r*rowH+bh/2, r, c};});
+  let g=`<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker><marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah-g" d="M0,0 L10,5 L0,10 z"/></marker></defs>`;
+  // header: goal
+  g+=`<rect x="${W/2-150}" y="6" width="300" height="34" rx="8" fill="none" stroke="currentColor" stroke-dasharray="4 3"/><text class="nt" x="${W/2}" y="27" text-anchor="middle">${esc((S.goal||"Your team").slice(0,40))}</text>`;
+  g+=`<line class="edge" x1="${W/2}" y1="40" x2="${pos[0].x}" y2="${pos[0].y-bh/2-4}" stroke-dasharray="3 3" marker-end="url(#a)"/>`;
+  // edges
+  for(let i=0;i<steps.length-1;i++){const a=pos[i],b=pos[i+1];
+    if(a.r===b.r){const dir=b.x>a.x?1:-1; g+=`<line class="edge" x1="${a.x+dir*bw/2}" y1="${a.y}" x2="${b.x-dir*(bw/2+3)}" y2="${b.y}" marker-end="url(#a)"/>`;}
+    else g+=`<line class="edge" x1="${a.x}" y1="${a.y+bh/2}" x2="${b.x}" y2="${b.y-bh/2-3}" marker-end="url(#a)"/>`;}
+  // nodes
+  steps.forEach((s,i)=>{const p=pos[i];
+    if(s.type==="gate"){g+=`<polygon class="n-gate" points="${p.x},${p.y-34} ${p.x+62},${p.y} ${p.x},${p.y+34} ${p.x-62},${p.y}"/><text class="nt t-gate" x="${p.x}" y="${p.y-2}" text-anchor="middle">YOU</text><text class="ns" x="${p.x}" y="${p.y+12}" text-anchor="middle">${esc((s.batch||"approve").slice(0,18))}</text>`; return;}
+    const cls=s.type==="check"?"n-check":"n-agent";
+    const lines=wrapText(s.does,22);
+    g+=`<rect class="${cls}" x="${p.x-bw/2}" y="${p.y-bh/2}" width="${bw}" height="${bh}" rx="8"/>`;
+    g+=`<text class="nt ${s.type==="check"?"t-check":""}" x="${p.x}" y="${p.y-10}" text-anchor="middle">${esc((n=>n.length>16?n.slice(0,15)+"…":n)(s.name||"Unnamed"))}</text>`;
+    lines.forEach((l,k)=>g+=`<text class="ns" x="${p.x}" y="${p.y+6+k*12}" text-anchor="middle">${esc(l)}</text>`);
+  });
+  // learning loop
+  const ruleCount=(S.rules||"").split("\n").filter(x=>x.trim()).length;
+  if(ruleCount){const last=pos[pos.length-1]; const yb=H-12;
+    g+=`<path class="loop" d="M${last.x},${last.y+bh/2+2} L${last.x},${yb} L14,${yb} L14,23 L${W/2-152},23" marker-end="url(#ag)"/><text class="ns" x="${W/2}" y="${yb-4}" text-anchor="middle" style="fill:var(--gate)">${ruleCount} rule${ruleCount>1?"s":""} from corrections feed back in</text>`;}
+  $("#chart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Org chart of your agent team: ${esc(steps.map(s=>s.type==="gate"?"you approve":(s.name||"agent")).join(", then "))}.">${g}</svg>`;
+}
+
+/* ---------- Rules + brief ---------- */
+function renderRight(){
+  const A=analyze();
+  S.steps.forEach((s,i)=>{const el=document.getElementById("w"+i); if(el) el.textContent=A.warn[i]||"";});
+  const n=A.rules.filter(r=>r.ok).length; $("#score").textContent=`${n}/4`;
+  $("#ruleList").innerHTML=A.rules.map((r,i)=>`<li class="rule"><span class="pill ${r.ok?"ok":"no"}">${r.ok?"Pass":"Not yet"}</span><div><b>${i+1}. ${r.t}</b>${r.ok?"":`<p class="small muted">${r.fix}</p>`}</div></li>`).join("");
+  renderChart();
+  const trustText={all:"Every item comes to me for approval.",batch:"I approve in batches at my gates.",lane:"Low-risk items may run on their own. "+(S.lane||"")}[S.trust||"all"];
+  let b=`TEAM BRIEF: ${S.goal||"(team goal)"}\n\nYou are part of a team. Each role does one job and stays within its limits. Hand your output to the next role in the order below. Never approve your own work.\n\n`;
+  S.steps.forEach((s,i)=>{
+    if(s.type==="gate"){ b+=`${i+1}. HUMAN GATE (me)\n   I approve: ${s.does||"-"}\n   When: ${s.batch||"-"}\n   Stop here and wait for my decision. Bundle everything for me in one batch.\n\n`; return; }
+    b+=`${i+1}. ${(s.type==="check"?"CHECKER":"AGENT")}: ${s.name||"-"}\n   Does: ${s.does||"-"}\n   Does not: ${s.doesNot||"-"}\n`;
+    if(s.type==="check") b+=`   Pass/fail checks:\n${(s.checklist||"").split("\n").filter(x=>x.trim()).map(x=>"   - "+x.trim()).join("\n")||"   - (add checks)"}\n   Report pass or fail for each check. If anything fails, send it back with the reason. Don't fix it yourself.\n`;
+    b+="\n";
+  });
+  const rl=(S.rules||"").split("\n").filter(x=>x.trim());
+  b+=`TRUST LEVEL\n${trustText}\n\nSTANDING RULES (from my past corrections)\n${rl.length?rl.map(x=>"- "+x.trim()).join("\n"):"- (none yet)"}\n\nWhen I reject something, I'll give a reason. Add it to the standing rules and follow it from then on.\nNever say something is done, sent, or published unless you've confirmed it.`;
+  $("#brief").textContent=b;
+}
+function renderAll(){ renderLeft(); renderRight(); }
+
+/* ---------- Events ---------- */
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.i!==undefined){ S.steps[+t.dataset.i][t.dataset.k]=t.value; }
+  else if(t.id==="goal") S.goal=t.value; else if(t.id==="rules") S.rules=t.value; else if(t.id==="lane") S.lane=t.value; else return;
+  save(); renderRight();
+});
+document.addEventListener("change",e=>{ if(e.target.id==="trust"){ S.trust=e.target.value; save(); $("#laneWrap").hidden=S.trust!=="lane"; renderRight(); }});
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.add){ const t=b.dataset.add; S.steps.push(t==="gate"?{type:"gate",does:"",batch:""}:{type:t,name:"",does:"",doesNot:"",checklist:""}); save(); renderAll(); const last=document.querySelectorAll("#steps .card"); last[last.length-1]?.querySelector("input,textarea")?.focus(); }
+  else if(b.dataset.del!==undefined){ S.steps.splice(+b.dataset.del,1); save(); renderAll(); }
+  else if(b.dataset.up!==undefined){ const i=+b.dataset.up; [S.steps[i-1],S.steps[i]]=[S.steps[i],S.steps[i-1]]; save(); renderAll(); }
+  else if(b.dataset.down!==undefined){ const i=+b.dataset.down; [S.steps[i+1],S.steps[i]]=[S.steps[i],S.steps[i+1]]; save(); renderAll(); }
+  else if(b.id==="reset"){ S={goal:"",trust:"all",lane:"",rules:"",steps:[{type:"agent",name:"",does:"",doesNot:""}]}; save(); renderAll(); }
+  else if(b.id==="loadEx"){ S=JSON.parse(JSON.stringify(EXAMPLE)); save(); isExample=true; renderAll(); $("#exNote").hidden=false; }
+  else if(b.id==="copy"){ try{ await navigator.clipboard.writeText($("#brief").textContent); $("#copyMsg").textContent="Copied. Paste it into your AI tool."; }catch(err){ const r=document.createRange(); r.selectNodeContents($("#brief")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); $("#copyMsg").textContent="Selected. Press Ctrl+C or Cmd+C to copy."; } }
+});
+renderAll(); $("#laneWrap").hidden=S.trust!=="lane";
+</script>
+</body>
+</html>
