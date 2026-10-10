@@ -41,7 +41,7 @@ You can also browse the `lessons` folder above. Each lesson has the key ideas, t
 
 The tools are free. You enter your email once to open them. Only your first name (optional) and email are sent, to Sandie's list. They're never sold or shared.
 
-Subscribing to Sandie's weekly tips is optional. You get full access either way, and you can unsubscribe anytime.
+Getting an email when a new lesson or tool comes out is optional. You get full access either way, and you can unsubscribe anytime.
 
 What you build in a tool is never sent to a server. It stays saved in your own browser so you can come back to it.
 

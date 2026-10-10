@@ -176,7 +176,7 @@ footer{padding-top:28px;font-size:.86rem;color:var(--muted);display:grid;gap:4px
     <label class="f" for="g_name"><span>First name (optional)</span><input type="text" id="g_name" name="name" maxlength="60" autocomplete="given-name"></label>
     <label class="f" for="g_email"><span>Email</span><input type="text" id="g_email" name="email" maxlength="200" autocomplete="email" inputmode="email" required></label>
     <label class="hp" for="g_web" aria-hidden="true">Website<input type="text" id="g_web" name="website" tabindex="-1" autocomplete="off"></label>
-    <label class="consent" for="g_sub"><input type="checkbox" id="g_sub" name="subscribed"><span>Yes, send me Sandie's weekly tips on leading AI agents. Unsubscribe anytime.</span></label>
+    <label class="consent" for="g_sub"><input type="checkbox" id="g_sub" name="subscribed"><span>Yes, email me when Sandie releases a new free lesson or tool. Unsubscribe anytime.</span></label>
     <p class="err" id="gErr" aria-live="polite"></p>
     <div class="bar"><button class="btn primary" type="submit" id="gGo">Open the tool</button></div>
     <p class="small muted">Your email goes only to Sandie's list. Never sold or shared.</p>
@@ -341,7 +341,7 @@ $("#gateForm").addEventListener("submit",e=>{
   if(ENDPOINT){
     const sub=$("#g_sub").checked;
     const body=new URLSearchParams({name:$("#g_name").value.trim(),email,subscribed:sub?"yes":"no",source:"Agent Team Builder (Lesson 1)",website:$("#g_web").value,
-      consent:sub?"Yes, send me Sandie's weekly tips on leading AI agents. Unsubscribe anytime.":"Tool access only. No subscription."});
+      consent:sub?"Yes, email me when Sandie releases a new free lesson or tool. Unsubscribe anytime.":"Tool access only. No subscription."});
     fetch(ENDPOINT,{method:"POST",mode:"no-cors",body}).catch(()=>{});
   }
 });
