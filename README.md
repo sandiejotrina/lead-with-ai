@@ -22,7 +22,7 @@ You can also browse the `lessons` folder above. Each lesson has the key ideas, t
 
 | # | Lesson | Video | Tool |
 |---|---|---|---|
-| 1 | [Your agents need a boss](lessons/01-lead-your-agents/README.md) | I Run 8 AI Agents Like a Team. Here's the Org Chart. | [Agent Team Builder](tools/agent-team-builder/) |
+| 1 | [Your agents need a boss](lessons/01-lead-your-agents/README.md) | My AI Agents Kept Failing. So I Gave Them a Boss. | [Agent Team Builder](tools/agent-team-builder/) |
 | 2 | Why AI agents fail *(coming soon)* | Why AI Agents Fail (It's Not a Technical Problem) | *coming soon* |
 | 3 | Think like a manager, not a coder *(coming soon)* | How to Use AI Agents: Think Like a Manager, Not a Coder | *coming soon* |
 

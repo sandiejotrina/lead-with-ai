@@ -1,6 +1,6 @@
 # Lesson 1: Your agents need a boss
 
-**Video:** I Run 8 AI Agents Like a Team. Here's the Org Chart.
+**Video:** My AI Agents Kept Failing. So I Gave Them a Boss.
 **Tool:** [Agent Team Builder](../../tools/agent-team-builder/)
 **Time:** 15 minutes
 
