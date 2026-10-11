@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Onboard your AI agent like a new hire: job, training packet, supervision, and rules. A free companion tool to the Lead with AI video series.">
+<title>New Agent Onboarding Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two-pane workbench. Left: the four onboarding steps as a form. Right: the onboarding card, a readiness check, and copyable agent instructions. Stacks on phones. */
+:root{
+  --bg:#F4F6F5; --surface:#FFFFFF; --fg:#13201D; --muted:#56635F; --line:#D5DDDA;
+  --ink:#13201D; --check:#1F5FA8; --check-soft:#E3EDF8; --gate:#B5541C; --gate-soft:#F8E8DD;
+  --ok:#0E5E52; --ok-soft:#DDEEE9; --warn:#9A6212; --warn-soft:#F6ECD9;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1513; --surface:#151F1C; --fg:#E7EDEB; --muted:#9AA9A4; --line:#2A3632; --ink:#E7EDEB;
+  --check:#7FB2EA; --check-soft:#17283B; --gate:#F0A070; --gate-soft:#3A2518;
+  --ok:#5FC2AE; --ok-soft:#18302A; --warn:#E2AE5C; --warn-soft:#33291A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#151F1C; --fg:#E7EDEB; --muted:#9AA9A4; --line:#2A3632; --ink:#E7EDEB;
+  --check:#7FB2EA; --check-soft:#17283B; --gate:#F0A070; --gate-soft:#3A2518;
+  --ok:#5FC2AE; --ok-soft:#18302A; --warn:#E2AE5C; --warn-soft:#33291A; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.2rem;font-weight:800}
+h3{font-size:.98rem;font-weight:500}
+p{margin:0;max-width:64ch}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+header{display:grid;gap:12px;padding-block:32px 22px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font-family:var(--mono);font-size:.78rem;border-radius:6px;padding:8px 12px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn.primary{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.add-agent{border-color:var(--ink)} .btn.add-check{border-color:var(--check);color:var(--check)} .btn.add-gate{border-color:var(--gate);color:var(--gate)}
+.btn.icon{padding:5px 8px}
+.note{font-family:var(--mono);font-size:.74rem;color:var(--warn);background:var(--warn-soft);padding:6px 10px;border-radius:6px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.pane{display:grid;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+label.f{display:grid;gap:4px;font-size:.88rem;min-width:0}
+label.f span{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+input[type=text],textarea,select{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+textarea{min-height:56px;resize:vertical}
+
+.step{border-left:4px solid var(--ink)}
+.step.check{border-left-color:var(--check)}
+.step.gate{border-left-color:var(--gate)}
+.step .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--bg)}
+.step.check .tag{background:var(--check-soft);color:var(--check)}
+.step.gate .tag{background:var(--gate-soft);color:var(--gate)}
+.warnline{font-size:.82rem;color:var(--warn)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:560px;height:auto;color:var(--fg)}
+svg text{font-family:var(--mono);fill:currentColor}
+svg .nt{font-size:12px;font-weight:500}
+svg .ns{font-size:9.5px;fill:var(--muted)}
+svg .n-agent{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}
+svg .n-check{fill:var(--check-soft);stroke:var(--check);stroke-width:1.4}
+svg .n-gate{fill:var(--gate-soft);stroke:var(--gate);stroke-width:1.8}
+svg .t-gate{fill:var(--gate)} svg .t-check{fill:var(--check)}
+svg .edge{stroke:currentColor;stroke-width:1.3;fill:none}
+svg .loop{stroke:var(--gate);stroke-width:1.3;fill:none;stroke-dasharray:5 4}
+svg .ah{fill:currentColor} svg .ah-g{fill:var(--gate)}
+
+.rules{display:grid;gap:8px;list-style:none;margin:0;padding:0}
+.rule{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px;border-radius:8px;background:var(--bg)}
+.pill{font-family:var(--mono);font-size:.68rem;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.no{background:var(--warn-soft);color:var(--warn)}
+.rule b{font-family:var(--display);font-weight:500}
+.score{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1}
+.brief{font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:12px;max-height:340px;overflow:auto;overflow-wrap:anywhere}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+.locked .wrap{filter:blur(7px);user-select:none;pointer-events:none}
+dialog{border:1px solid var(--line);border-radius:12px;padding:0;max-width:440px;width:calc(100% - 32px);background:var(--surface);color:var(--fg)}
+dialog::backdrop{background:rgba(10,20,18,.45)}
+.gate{display:grid;gap:12px;padding:22px}
+.gate h2{font-size:1.25rem}
+.consent{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:.9rem}
+.consent input{width:20px;height:20px;margin-top:2px;accent-color:var(--ok)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:var(--warn);font-size:.85rem;min-height:1.1em}
+footer{padding-top:28px;font-size:.86rem;color:var(--muted);display:grid;gap:4px}
+
+.idcard{border:2px solid var(--ink);border-radius:14px;background:var(--surface);overflow:hidden;display:grid}
+.idcard .head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:var(--ok);color:var(--surface)}
+.idcard .head b{font-family:var(--display);font-size:1.25rem;font-weight:800;overflow-wrap:anywhere}
+.idcard .head span{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.idcard dl{margin:0;display:grid;grid-template-columns:132px minmax(0,1fr)}
+.idcard dt,.idcard dd{margin:0;padding:10px 14px;border-top:1px solid var(--line);font-size:.9rem}
+.idcard dt{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+.idcard dd{overflow-wrap:anywhere;white-space:pre-line}
+.idcard dd.not{color:var(--gate)} .idcard dd.chk{color:var(--check)}
+.idcard .empty{color:var(--muted);font-style:italic}
+@media (max-width:520px){.idcard dl{grid-template-columns:1fr}.idcard dt{border-bottom:0}.idcard dd{border-top:0}}
+.stepno{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.card h2 .stepno{display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Companion to the video · How Do You Actually Use AI Agents? (Think Like a Manager)</p>
+  <h1>New Agent Onboarding Card</h1>
+  <p>Don't use your AI agent like an app. Onboard it like a new hire. Fill in the four steps for one agent, and you'll get its onboarding card plus instructions you can paste straight into your AI tool.</p>
+  <div class="bar"><span class="note" id="exNote">Example loaded: a newsletter writer. Edit it, or start fresh.</span><button class="btn" type="button" id="reset">Start fresh</button><button class="btn" type="button" id="loadEx">Load the example</button></div>
+</header>
+
+<div class="grid">
+<section class="pane" aria-label="Onboarding steps">
+  <div class="card">
+    <h2><span class="stepno">STEP 1</span>Give it a job, and say what it doesn't do</h2>
+    <label class="f" for="name"><span>Agent's name or role</span><input type="text" id="name" maxlength="60" placeholder="e.g. Newsletter Writer"></label>
+    <label class="f" for="does"><span>What it does (one line)</span><textarea id="does" maxlength="300" placeholder="e.g. Writes my weekly client newsletter from the updates I approve."></textarea></label>
+    <label class="f" for="doesNot"><span>What it does NOT do (the line almost everyone skips)</span><textarea id="doesNot" maxlength="300" placeholder="e.g. Does not add facts or send anything."></textarea></label>
+  </div>
+  <div class="card">
+    <h2><span class="stepno">STEP 2</span>Give it a training packet</h2>
+    <p class="small muted">Show, don't describe. Three examples of your best work beat a paragraph about your style.</p>
+    <label class="f" for="ex1"><span>Example 1</span><input type="text" id="ex1" maxlength="160" placeholder="e.g. My March newsletter (best open rate)"></label>
+    <label class="f" for="ex2"><span>Example 2</span><input type="text" id="ex2" maxlength="160"></label>
+    <label class="f" for="ex3"><span>Example 3</span><input type="text" id="ex3" maxlength="160"></label>
+    <label class="f" for="never"><span>Things it should never say (one per line)</span><textarea id="never" maxlength="400"></textarea></label>
+  </div>
+  <div class="card">
+    <h2><span class="stepno">STEP 3</span>Supervise the first week, then let go a little</h2>
+    <label class="f" for="checker"><span>Who checks its work, and what they check</span><textarea id="checker" maxlength="300" placeholder="e.g. Me, or a separate checker agent: every fact has a source, under 400 words."></textarea></label>
+    <label class="f" for="stage"><span>Where you are with this agent right now</span>
+      <select id="stage">
+        <option value="all">Week one: I check every single thing</option>
+        <option value="batch">Earned some trust: I check in batches</option>
+        <option value="lane">Trusted: low-risk work runs on its own</option>
+      </select></label>
+    <label class="f" for="batch" id="batchWrap"><span>How often you check</span><input type="text" id="batch" maxlength="80" placeholder="e.g. Once a week, all at once"></label>
+    <label class="f" for="risky"><span>Always comes back to you, no matter what</span><textarea id="risky" maxlength="300" placeholder="e.g. Prices, medical claims, anything about a specific client."></textarea></label>
+  </div>
+  <div class="card">
+    <h2><span class="stepno">STEP 4</span>When it's wrong, say why, and make it a rule</h2>
+    <label class="f" for="rules"><span>Rules from past corrections (one per line)</span><textarea id="rules" maxlength="600" placeholder="e.g. Keep it under 400 words."></textarea></label>
+  </div>
+</section>
+
+<section class="pane" aria-label="Your onboarding card">
+  <div class="idcard" id="cardOut" aria-live="polite"></div>
+  <div class="card">
+    <div class="bar" style="justify-content:space-between"><h2>Ready for day one?</h2><span class="score" id="score">0/4</span></div>
+    <ul class="rules" id="checks"></ul>
+  </div>
+  <div class="card">
+    <div class="bar" style="justify-content:space-between"><h2>Paste this into your agent</h2><button class="btn primary" type="button" id="copy">Copy instructions</button></div>
+    <p class="small muted">Paste it into the agent's instructions in Claude, ChatGPT, or whatever tool you use.</p>
+    <div class="brief" id="brief"></div>
+    <span class="small muted" id="copyMsg" aria-live="polite"></span>
+  </div>
+</section>
+</div>
+
+<footer>
+  <p>You don't use an AI agent like an app. You onboard it like a new hire.</p>
+  <p>From <strong>Lead with AI</strong> by Sandie Dela Cruz, AuD, OD, MBA. Your card stays in this browser. Only the name and email you enter to open the tool are sent, to Sandie's list.</p>
+</footer>
+</div>
+
+<dialog id="gate" aria-labelledby="gateH">
+  <form class="gate" id="gateForm" method="dialog" novalidate>
+    <h2 id="gateH">Open the Onboarding Card</h2>
+    <p class="small muted">Free. Enter your email to get full access right away. Subscribing is optional.</p>
+    <label class="f" for="g_name"><span>First name (optional)</span><input type="text" id="g_name" name="name" maxlength="60" autocomplete="given-name"></label>
+    <label class="f" for="g_email"><span>Email</span><input type="text" id="g_email" name="email" maxlength="200" autocomplete="email" inputmode="email" required></label>
+    <label class="hp" for="g_web" aria-hidden="true">Website<input type="text" id="g_web" name="website" tabindex="-1" autocomplete="off"></label>
+    <label class="consent" for="g_sub"><input type="checkbox" id="g_sub" name="subscribed"><span>Yes, email me when Sandie releases a new free lesson or tool. Unsubscribe anytime.</span></label>
+    <p class="err" id="gErr" aria-live="polite"></p>
+    <div class="bar"><button class="btn primary" type="submit" id="gGo">Open the tool</button></div>
+    <p class="small muted">Your email goes only to Sandie's list. Never sold or shared.</p>
+  </form>
+</dialog>
+
+<script>
+const KEY="agentOnboardingCard.v1";
+const FIELDS=["name","does","doesNot","ex1","ex2","ex3","never","checker","stage","batch","risky","rules"];
+const EXAMPLE={name:"Newsletter Writer",does:"Writes my weekly client newsletter from the three updates I approve.",doesNot:"Does not add facts, pick the topics, or send anything.",
+ ex1:"My March newsletter (best open rate)",ex2:"The issue clients replied to most",ex3:"My short 'three tips' issue",
+ never:"game-changer\nrevolutionary\nexclamation marks",checker:"A separate checker agent: every fact has a source, under 400 words, no hype.",
+ stage:"batch",batch:"Once a week, all at once",risky:"Prices, medical claims, anything about a specific client.",rules:"Keep it under 400 words.\nOpen with the most useful update, not a greeting."};
+const $=q=>document.querySelector(q);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const lines=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&typeof v==="object"?v:null}catch(e){return null}}
+let S=load(); const fromStore=!!S; S=S||JSON.parse(JSON.stringify(EXAMPLE));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} $("#exNote").hidden=true;}
+function fill(){FIELDS.forEach(k=>{const el=$("#"+k); if(el) el.value=S[k]||(k==="stage"?"all":"");}); $("#batchWrap").hidden=S.stage==="all";}
+const stageText={all:"Week one: every single thing comes back to me before it's used.",batch:"I check your work in batches",lane:"Low-risk work can go out on its own"};
+function stageLine(){ if(S.stage==="batch") return stageText.batch+(S.batch?": "+S.batch.trim():"")+"."; if(S.stage==="lane") return stageText.lane+(S.batch?". I still review: "+S.batch.trim():"")+"."; return stageText.all; }
+function render(){
+  const name=(S.name||"").trim()||"Your agent";
+  const ex=[S.ex1,S.ex2,S.ex3].map(x=>(x||"").trim()).filter(Boolean);
+  const v=(t,cls="")=>t?`<dd class="${cls}">${esc(t)}</dd>`:`<dd class="empty">Not filled in yet</dd>`;
+  $("#cardOut").innerHTML=`<div class="head"><b>${esc(name)}</b><span>New hire · onboarding card</span></div><dl>
+   <dt>Job</dt>${v((S.does||"").trim())}
+   <dt>Does not</dt>${v((S.doesNot||"").trim(),"not")}
+   <dt>Training packet</dt>${v(ex.map((e,i)=>(i+1)+". "+e).join("\n"))}
+   <dt>Never says</dt>${v(lines(S.never).join(" · "))}
+   <dt>Checked by</dt>${v((S.checker||"").trim(),"chk")}
+   <dt>Trust level</dt>${v(stageLine())}
+   <dt>Always asks me</dt>${v((S.risky||"").trim(),"not")}
+   <dt>Rules learned</dt>${v(lines(S.rules).map(r=>"• "+r).join("\n"))}
+  </dl>`;
+  const checks=[
+   {ok:!!(S.doesNot||"").trim(),t:"It knows what it does not do.",fix:"Write one line in Step 1 about what this agent does not do."},
+   {ok:ex.length>=3,t:"It has three examples of good work.",fix:`Add ${3-ex.length} more example${3-ex.length===1?"":"s"} in Step 2.`},
+   {ok:!!(S.checker||"").trim(),t:"Someone checks its work.",fix:"Name who checks it in Step 3. You, or a separate checker."},
+   {ok:!!(S.risky||"").trim(),t:"It knows what always comes back to you.",fix:"List the risky things in Step 3 that it must always bring to you."},
+  ];
+  const n=checks.filter(c=>c.ok).length; $("#score").textContent=n+"/4";
+  $("#checks").innerHTML=checks.map(c=>`<li class="rule"><span class="pill ${c.ok?"ok":"no"}">${c.ok?"Ready":"Missing"}</span><div><b>${esc(c.t)}</b>${c.ok?"":`<div class="small muted">${esc(c.fix)}</div>`}</div></li>`).join("");
+  let b=`ROLE\nYou are my ${name}.\n\nYOUR JOB\n${(S.does||"").trim()||"(describe the job)"}\n\nNOT YOUR JOB\n${(S.doesNot||"").trim()||"(say what this agent does not do)"}\nIf a task falls outside your job, tell me instead of doing it.\n`;
+  if(ex.length) b+=`\nWHAT GOOD LOOKS LIKE\nBefore you start, study these examples of my best work and match their tone, length, and structure:\n${ex.map((e,i)=>"  "+(i+1)+". "+e).join("\n")}\n(I'll paste or attach them.)\n`;
+  const nv=lines(S.never); if(nv.length) b+=`\nNEVER SAY\n${nv.map(x=>"  - "+x).join("\n")}\n`;
+  if((S.checker||"").trim()) b+=`\nWHO CHECKS YOUR WORK\n${S.checker.trim()}\nYour work gets checked before anyone uses it. Don't mark it final yourself.\n`;
+  b+=`\nWHEN TO COME BACK TO ME\n${stageLine()}\n`;
+  if((S.risky||"").trim()) b+=`Always stop and ask me first about: ${S.risky.trim()}\n`;
+  const rl=lines(S.rules); if(rl.length) b+=`\nRULES FROM PAST CORRECTIONS\n${rl.map(x=>"  - "+x).join("\n")}\n`;
+  b+=`\nIf anything in a task is unclear or conflicts with these instructions, ask me before you start.`;
+  $("#brief").textContent=b;
+}
+document.addEventListener("input",e=>{ const k=e.target.id; if(!FIELDS.includes(k)) return; S[k]=e.target.value; save(); if(k==="stage") $("#batchWrap").hidden=S.stage==="all"; render(); });
+document.addEventListener("change",e=>{ if(e.target.id==="stage"){ S.stage=e.target.value; save(); $("#batchWrap").hidden=S.stage==="all"; render(); } });
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.id==="reset"){ S={stage:"all"}; save(); fill(); render(); }
+  else if(b.id==="loadEx"){ S=JSON.parse(JSON.stringify(EXAMPLE)); save(); fill(); render(); $("#exNote").hidden=false; }
+  else if(b.id==="copy"){ copyBrief(); }
+});
+async function copyBrief(){
+  const t=$("#brief").textContent;
+  try{ await navigator.clipboard.writeText(t); $("#copyMsg").textContent="Copied. Paste it into your agent's instructions."; }
+  catch(err){ const r=document.createRange(); r.selectNodeContents($("#brief")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); $("#copyMsg").textContent="Selected. Press Ctrl+C or Cmd+C to copy."; }
+}
+/* ---------- Email gate (shared with the other Lead with AI tools) ---------- */
+const ENDPOINT="https://script.google.com/macros/s/AKfycbwQ4vmuTL0Eo3o_-o3OWd_77xvvuLT2gq9sSfMroQB7VX9tgcjhtQNJ949gOGTng25C9Q/exec";
+const UKEYS=["leadWithAI.unlocked","agentTeamBuilder.unlocked"];
+function unlocked(){ try{return UKEYS.some(k=>localStorage.getItem(k)==="1")}catch(e){return false} }
+function paintLock(){ const u=unlocked(); document.body.classList.toggle("locked",!u); $(".wrap").inert=!u; if(!u) openGate(); }
+$("#gate").addEventListener("cancel",e=>{ if(!unlocked()) e.preventDefault(); });
+function openGate(){ $("#gErr").textContent=""; const d=$("#gate"); if(d.showModal) d.showModal(); else d.setAttribute("open",""); $("#g_email").focus(); }
+$("#gateForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const email=$("#g_email").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ $("#gErr").textContent="Please enter a valid email address."; $("#g_email").focus(); return; }
+  try{UKEYS.forEach(k=>localStorage.setItem(k,"1"))}catch(err){}
+  $("#gate").close(); paintLock();
+  if(ENDPOINT){
+    const sub=$("#g_sub").checked;
+    const body=new URLSearchParams({name:$("#g_name").value.trim(),email,subscribed:sub?"yes":"no",source:"Onboarding Card (Lesson 2)",website:$("#g_web").value,
+      consent:sub?"Yes, email me when Sandie releases a new free lesson or tool. Unsubscribe anytime.":"Tool access only. No subscription."});
+    fetch(ENDPOINT,{method:"POST",mode:"no-cors",body}).catch(()=>{});
+  }
+});
+$("#exNote").hidden=fromStore; fill(); render(); paintLock();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 Free tools and lessons for anyone who builds or works with AI agents.
 
-**The idea:** anyone can build an agent. Making several agents work together is a leadership job. Each lesson here goes with a video on the **Business Automation Made Simple** YouTube channel, and comes with a tool you can use right away. No coding and no sign-up.
+**The idea:** anyone can build an agent. Making several agents work together is a leadership job. Each lesson here goes with a video on the **Business Automation Made Simple** YouTube channel, and comes with a tool you can use right away. No coding needed, and every tool is free.
 
 By Sandie Dela Cruz, AuD, OD, MBA: clinician, AI builder, and leadership trainer.
 
@@ -23,8 +23,8 @@ You can also browse the `lessons` folder above. Each lesson has the key ideas, t
 | # | Lesson | Video | Tool |
 |---|---|---|---|
 | 1 | [Your agents need a boss](lessons/01-lead-your-agents/README.md) | My AI Agents Kept Failing. So I Gave Them a Boss. | [Agent Team Builder](tools/agent-team-builder/) |
-| 2 | Why AI agents fail *(coming soon)* | Why AI Agents Fail (It's Not a Technical Problem) | *coming soon* |
-| 3 | Think like a manager, not a coder *(coming soon)* | How to Use AI Agents: Think Like a Manager, Not a Coder | *coming soon* |
+| 2 | [Onboard your agent like a new hire](lessons/02-onboard-your-agent/README.md) | How Do You Actually Use AI Agents? (Think Like a Manager) | [New Agent Onboarding Card](tools/agent-onboarding-card/) |
+| 3 | Why AI agents keep failing *(coming soon)* | Why Do AI Agents Keep Failing? | *coming soon* |
 
 ---
 
